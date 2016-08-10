@@ -54,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             var imagesPath = "${contextPath}/resources/images/";
             
             var rootName = <js:quote value="${actionBean.category.name}"/>;
+            var applications = ${actionBean.applications};
 
             vieweradmin.components.Menu.setActiveLink('menu_services');
         </script>

@@ -124,7 +124,7 @@ Ext.onReady(function() {
         renderTo: Ext.getBody()
     });
 
-    var editMenu = Ext.create('Ext.menu.Menu', {
+    var editMenuService = Ext.create('Ext.menu.Menu', {
         data: {
             record: null
         },
@@ -141,6 +141,40 @@ Ext.onReady(function() {
         ],
         renderTo: Ext.getBody()
     });
+    
+    var editMenuLayer = Ext.create('Ext.menu.Menu', {
+        data: {
+            record: null
+        },
+        items: [{
+            text: 'Bewerken',
+            icon: imagesPath + "wrench.png",
+            listeners: {
+                click: function(item, e, eOpts) {
+                    var record = item.ownerCt.config.data.record;
+                    tree.fireEvent("itemclick", null, record);
+                }
+            }
+        }, 
+        {
+            id: 'addToApp',
+            text: 'Voeg toe aan applicatie',
+            menu: {
+                items: applications,
+                listeners: {
+                    click: 
+                        function (menu, item, e, opts) {
+                            var me = this;
+                            me.type = item.id;
+                        }
+                }
+
+            }
+        }
+        ],
+        renderTo: Ext.getBody()
+    });
+
 
     // Definition of the tree
     var tree = Ext.create('Ext.tree.Panel', {
@@ -155,13 +189,16 @@ Ext.onReady(function() {
         scroll: 'both',
         listeners: {
             itemcontextmenu: function(view, record, item, index, event, eOpts) {
-                console.log(categoryMenu, editMenu);
-                if(record.get('type') == "category") {
+                console.log(categoryMenu, editMenuLayer, editMenuService);
+                if(record.get('type') === "category") {
                     categoryMenu.config.data.clickedItem = record;
                     categoryMenu.showAt(event.getXY());
-                } else {
-                    editMenu.config.data.record = record;
-                    editMenu.showAt(event.getXY());
+                } else if(record.get('type') === "service"){
+                    editMenuService.config.data.record = record;
+                    editMenuService.showAt(event.getXY());
+                }else if(record.get('type') === "layer"){
+                    editMenuLayer.config.data.record = record;
+                    editMenuLayer.showAt(event.getXY());
                 }
                 event.stopEvent();
             },

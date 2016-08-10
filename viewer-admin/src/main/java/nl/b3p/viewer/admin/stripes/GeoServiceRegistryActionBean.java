@@ -17,7 +17,6 @@
 package nl.b3p.viewer.admin.stripes;
 
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
@@ -26,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.validation.Validate;
+import nl.b3p.viewer.config.app.Application;
 import nl.b3p.viewer.config.security.Group;
 import nl.b3p.viewer.config.services.Category;
 import nl.b3p.viewer.config.services.GeoService;
@@ -58,6 +58,8 @@ public class GeoServiceRegistryActionBean implements ActionBean {
 
     private Category category;
 
+    private JSONArray applications = new JSONArray();
+    
     //<editor-fold defaultstate="collapsed" desc="getters and setters">
     public void setContext(ActionBeanContext context) {
         this.context = context;
@@ -90,12 +92,33 @@ public class GeoServiceRegistryActionBean implements ActionBean {
     public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
+
+    public JSONArray getApplications() {
+        return applications;
+    }
+
+    public void setApplications(JSONArray applications) {
+        this.applications = applications;
+    }
     //</editor-fold>
 
     @DefaultHandler
     public Resolution view() {
         category = Category.getRootCategory();
                 
+        EntityManager em = Stripersist.getEntityManager();
+        List<Application> apps = em.createQuery("From Application", Application.class).getResultList();
+        for (Application app : apps) {
+               String appName = app.getName();
+            if (app.getVersion() != null) {
+                appName += " v" + app.getVersion();
+            }
+            
+            JSONObject j = new JSONObject();
+            j.put("id", "application_" + app.getId());
+            j.put("text", appName);
+            applications.put(j);
+        }
         return new ForwardResolution(JSP);
     }
     

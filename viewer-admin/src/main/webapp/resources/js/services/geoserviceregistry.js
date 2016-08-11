@@ -165,7 +165,12 @@ Ext.onReady(function() {
                     click: 
                         function (menu, item, e, opts) {
                             var me = this;
-                            me.type = item.id;
+                            var application = item.id.substring(12);
+                            var record = item.parentMenu.parentMenu.items.items[0].ownerCt.config.data.record;
+                            var layer = record.get('id').substring(1);
+                            var url = actionBeans["layerToApplication"] + '&layer=' + layer + "&application=" + application;
+                            Ext.get('editFrame').dom.src = url
+             
                         }
                 }
 

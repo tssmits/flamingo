@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 "category": <js:quote><stripes:url beanclass="nl.b3p.viewer.admin.stripes.GeoServiceRegistryActionBean"/></js:quote>,
                 "service": <js:quote><stripes:url beanclass="nl.b3p.viewer.admin.stripes.GeoServiceActionBean"/></js:quote>,
                 "layer": <js:quote><stripes:url beanclass="nl.b3p.viewer.admin.stripes.LayerActionBean"/></js:quote>,
+                "layerToApplication": <js:quote><stripes:url beanclass="nl.b3p.viewer.admin.stripes.LayerActionBean" event="addLayerToApplication"/></js:quote>,
                 "csw": <js:quote><stripes:url beanclass="nl.b3p.viewer.admin.stripes.CatalogServiceActionBean"/></js:quote>
             };
             

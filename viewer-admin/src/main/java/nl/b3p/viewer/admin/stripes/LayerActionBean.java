@@ -40,6 +40,8 @@ import org.stripesstuff.stripersist.Stripersist;
 public class LayerActionBean implements ActionBean {
 
     private static final String JSP = "/WEB-INF/jsp/services/layer.jsp";
+    private static final String DEFAULT_LEVEL_NAME = "Toegevoegde lagen";
+    
     private ActionBeanContext context;
     @Validate
     @ValidateNestedProperties({
@@ -65,7 +67,10 @@ public class LayerActionBean implements ActionBean {
     @Validate
     private Long featureSourceId;
     private List featureSources;
-
+    
+    @Validate(required = true, on = "addLayerToApplication")
+    private Application application;
+    
     //<editor-fold defaultstate="collapsed" desc="getters & setters">
     public ActionBeanContext getContext() {
         return context;
@@ -162,6 +167,15 @@ public class LayerActionBean implements ActionBean {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
+
     //</editor-fold>
 
     @Before(stages = LifecycleStage.BindingAndValidation)
@@ -269,6 +283,57 @@ public class LayerActionBean implements ActionBean {
         Stripersist.getEntityManager().getTransaction().commit();
         getContext().getMessages().add(new SimpleMessage("De kaartlaag is opgeslagen"));
 
+        return new ForwardResolution(JSP);
+    }
+    
+    
+    public Resolution addLayerToApplication(){
+        EntityManager em = Stripersist.getEntityManager();
+        application.loadTreeCache(em);
+        List<Level> levels = application.getTreeCache().getLevels();
+        Level defaultLevel = null;
+        // check of default mapje bestaat
+            // zo nee, aanmaken
+            // zo ja, ophalen
+        for (Level level : levels) {
+            if(level.getName().equals(DEFAULT_LEVEL_NAME)){
+                defaultLevel = level;
+            }
+        }
+        if(defaultLevel == null){
+            Level parent = new Level();
+            parent.setName(DEFAULT_LEVEL_NAME + " ouder");
+            parent.setParent(application.getRoot());
+            application.getRoot().getChildren().add(parent);
+            em.persist(parent);
+            em.persist(application.getRoot());
+            
+            
+            defaultLevel = new Level();
+            defaultLevel.setName(DEFAULT_LEVEL_NAME);
+            parent.getChildren().add(defaultLevel);
+            defaultLevel.setParent(parent);
+            em.persist(defaultLevel);
+            em.persist(parent);
+        }        
+        //voeg laag toe aan applicatie:
+            //ApplicationTreeLevelActionBean.save
+        ApplicationTreeLevelActionBean atlab = new ApplicationTreeLevelActionBean();
+        atlab.setContext(context);
+        atlab.setApplication(application);
+        atlab.setLevel(defaultLevel);
+        atlab.setSelectedlayers("l" + layer.getId());
+        String docsString = "";
+        List<Document> docs = defaultLevel.getDocuments();
+        for (int i = 0; i < docs.size(); i++) {
+            Document doc = docs.get(i);
+            if(i > 0){
+                docsString += ",";
+            }
+            docsString += doc.getId();
+        }
+        atlab.setSelecteddocs(docsString);
+        atlab.save();
         return new ForwardResolution(JSP);
     }
 }

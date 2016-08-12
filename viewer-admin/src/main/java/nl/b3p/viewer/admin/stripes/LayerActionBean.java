@@ -322,7 +322,20 @@ public class LayerActionBean implements ActionBean {
         atlab.setContext(context);
         atlab.setApplication(application);
         atlab.setLevel(defaultLevel);
-        atlab.setSelectedlayers("l" + layer.getId());
+        
+        String selectedLayers = "";
+        List<ApplicationLayer> appLayers = defaultLevel.getLayers();
+        for (ApplicationLayer appLayer : appLayers) {
+            if(!selectedLayers.isEmpty()){
+                selectedLayers += ",";
+            }
+            selectedLayers += "al" + appLayer.getId();
+        }
+        if(!selectedLayers.isEmpty()){
+            selectedLayers += ",";
+        }
+        selectedLayers += "l" + layer.getId();
+        atlab.setSelectedlayers(selectedLayers);
         String docsString = "";
         List<Document> docs = defaultLevel.getDocuments();
         for (int i = 0; i < docs.size(); i++) {
@@ -334,6 +347,17 @@ public class LayerActionBean implements ActionBean {
         }
         atlab.setSelecteddocs(docsString);
         atlab.save();
+        em.getTransaction().begin();
+        
+        StartLevel sl = new StartLevel();
+        sl.setLevel(defaultLevel);
+        sl.setApplication(application);
+        sl.setSelectedIndex(1);
+        em.persist(sl);
+        defaultLevel.getStartLevels().put(application, sl);
+        em.persist(defaultLevel);
+        em.getTransaction().commit();
+        
         return new ForwardResolution(JSP);
     }
 }

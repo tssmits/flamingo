@@ -349,15 +349,16 @@ public class LayerActionBean implements ActionBean {
         atlab.save();
         em.getTransaction().begin();
         
-        StartLevel sl = new StartLevel();
-        sl.setLevel(defaultLevel);
-        sl.setApplication(application);
-        sl.setSelectedIndex(1);
-        em.persist(sl);
-        defaultLevel.getStartLevels().put(application, sl);
-        em.persist(defaultLevel);
-        em.getTransaction().commit();
-        
+        if(!defaultLevel.getStartLevels().containsKey(application)){
+            StartLevel sl = new StartLevel();
+            sl.setLevel(defaultLevel);
+            sl.setApplication(application);
+            sl.setSelectedIndex(1);
+            em.persist(sl);
+            defaultLevel.getStartLevels().put(application, sl);
+            em.persist(defaultLevel);
+            em.getTransaction().commit();
+        }
         return new ForwardResolution(JSP);
     }
 }

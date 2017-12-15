@@ -35,7 +35,6 @@ Ext.define("viewer.EditFeature", {
             params: {application: this.config.viewerController.app.id, appLayer: appLayer.id, feature: Ext.JSON.encode(feature)},
             success: function(result) {
                 var response = Ext.JSON.decode(result.responseText);
-                console.log(response);    
                 if(response.success) {
                     if(response.hasOwnProperty("__fid")) {
                         successFunction(response.__fid);

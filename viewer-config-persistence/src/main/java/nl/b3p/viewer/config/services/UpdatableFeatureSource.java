@@ -94,6 +94,7 @@ public abstract class UpdatableFeatureSource extends FeatureSource{
                 if(!stillExists){
                     it.remove();
                 }
+                processed++;
                 if(processed == updatebatchsize){
                     processed = 0;
                     if(!em.getTransaction().isActive()){

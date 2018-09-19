@@ -59,7 +59,6 @@ Ext.define ("viewer.components.TransparencySlider",{
         }
         
         if(this.config.sliderForUserAdded){
-            var me =this;
             var c = {
                 selectedLayers:[],
                 initSelectedContent: JSON.parse(JSON.stringify( this.config.viewerController.app.selectedContent)),

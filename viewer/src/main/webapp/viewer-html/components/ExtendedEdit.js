@@ -37,8 +37,6 @@ Ext.define ("viewer.components.ExtendedEdit",{
         conf.isPopup = false;
         this.initConfig(conf);
         viewer.components.Edit.superclass.constructor.call(this, this.config);
-        var me = this;
-
         this.schema = new Ext.data.schema.Schema();
 
         this.navigateBackButton = this.createPaginationButton('left', 'Vorige');

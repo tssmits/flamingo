@@ -186,7 +186,6 @@ Ext.define ("viewer.components.Maptip",{
             return;
         }
         var radius=this.config.clickRadius*map.getResolution();
-        var me=this;
         var currentScale = this.config.viewerController.mapComponent.getMap().getScale();
         var visibleAppLayers = this.config.viewerController.getVisibleAppLayers();
         var inScaleLayers = new Array();

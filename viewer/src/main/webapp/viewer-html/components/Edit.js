@@ -579,7 +579,6 @@ Ext.define("viewer.components.Edit", {
         return container;
     },
     createUploadBox: function(t, index){
-        var me = this;
         var file = Ext.create('Ext.form.field.File', {
             label: "Upload een document",
             name: 'files[' + index + "]",
@@ -1147,7 +1146,6 @@ Ext.define("viewer.components.Edit", {
                             application: FlamingoAppLoader.get('appId')
                         },
                         success: function (response) {
-                            var resp = Ext.decode(response.responseText, true);
                             me.messageFunction("Bestanden opgeslagen");
                         },
                         failure: function () {

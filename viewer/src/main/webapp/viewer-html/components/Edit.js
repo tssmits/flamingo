@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* global Ext */
+/* global Ext, FlamingoAppLoader, actionBeans */
 
 /**
  * Edit component
@@ -70,9 +70,9 @@ Ext.define("viewer.components.Edit", {
         var me = this;
 
         Ext.mixin.Observable.capture(this.config.viewerController.mapComponent.getMap(), function (event) {
-            if (event == viewer.viewercontroller.controller.Event.ON_GET_FEATURE_INFO
-                    || event == viewer.viewercontroller.controller.Event.ON_MAPTIP) {
-                if (me.mode == "new" || me.mode == "edit" || me.mode == "delete" || me.mode == "copy") {
+            if (event === viewer.viewercontroller.controller.Event.ON_GET_FEATURE_INFO
+                    || event === viewer.viewercontroller.controller.Event.ON_MAPTIP) {
+                if (me.mode === "new" || me.mode === "edit" || me.mode === "delete" || me.mode === "copy") {
                     return false;
                 }
             }
@@ -112,7 +112,7 @@ Ext.define("viewer.components.Edit", {
         return this;
     },
     selectedContentChanged: function () {
-        if (this.vectorLayer == null) {
+        if (this.vectorLayer === null) {
             this.createVectorLayer();
         } else {
             this.config.viewerController.mapComponent.getMap().addLayer(this.vectorLayer);
@@ -138,7 +138,7 @@ Ext.define("viewer.components.Edit", {
         this.config.viewerController.mapComponent.getMap().addLayer(this.vectorLayer);
     },
     showWindow: function () {
-        if (this.vectorLayer == null) {
+        if (this.vectorLayer === null) {
             this.createVectorLayer();
         }
         this.mobileHide = false;
@@ -187,7 +187,7 @@ Ext.define("viewer.components.Edit", {
         this.inputContainer = this.maincontainer.down('#inputPanel');
         this.geomlabel = this.maincontainer.down("#geomLabel");
         this.savebutton = this.maincontainer.down("#saveButton");
-        if (!this.config.isPopup && this.vectorLayer == null) {
+        if (!this.config.isPopup && this.vectorLayer === null) {
             this.createVectorLayer();
         }
     },
@@ -251,7 +251,7 @@ Ext.define("viewer.components.Edit", {
                 items: bottomButtons,
                 hidden: true
             }
-        ]
+        ];
     },
     createEditButtons: function () {
         var buttons = [];
@@ -399,7 +399,7 @@ Ext.define("viewer.components.Edit", {
         }, this);
     },
     layerChanged: function (appLayer) {
-        if (appLayer != null) {
+        if (appLayer !== null) {
             if (this.vectorLayer) {
                 this.vectorLayer.removeAllFeatures();
             }
@@ -421,11 +421,11 @@ Ext.define("viewer.components.Edit", {
     loadAttributes: function (appLayer) {
         this.appLayer = appLayer;
         var me = this;
-        if (this.appLayer != null) {
+        if (this.appLayer !== null) {
             this.featureService = this.config.viewerController.getAppLayerFeatureService(this.appLayer);
             // check if featuretype was loaded
-            if (this.appLayer.attributes == undefined) {
-                this.featureService.loadAttributes(me.appLayer, function (attributes) {
+            if (this.appLayer.attributes === undefined || this.appLayer.attributes === null) {
+                this.featureService.loadAttributes(me.appLayer, function () {
                     me.initAttributeInputs(me.appLayer);
                 });
             } else {
@@ -803,7 +803,7 @@ Ext.define("viewer.components.Edit", {
         }
     },
     handleFeature: function (feature) {
-        if (feature != null) {
+        if (feature !== null) {
             this.inputContainer.getForm().setValues(feature);
             if (this.mode === "copy") {
                 this.currentFID = null;
@@ -868,7 +868,7 @@ Ext.define("viewer.components.Edit", {
                                                                 }
                                                             },
                                                             failure: function(result) {
-                                                                if(failureFunction != undefined) {
+                                                                if(failureFunction !==undefined) {
                                                                     failureFunction("Ajax request failed with status " + result.status + " " + result.statusText + ": " + result.responseText);
                                                                 }
                                                             }
@@ -926,7 +926,7 @@ Ext.define("viewer.components.Edit", {
         this.geomlabel.setHtml("Voeg een nieuw " + this.tekstGeom + " toe op de kaart");
         this.config.viewerController.mapComponent.getMap().removeMarker("edit");
         this.mode = "new";
-        if (this.newGeomType != null && this.geometryEditable) {
+        if (this.newGeomType !== null && this.geometryEditable) {
             this.vectorLayer.drawFeature(this.newGeomType);
         }
         this.savebutton.setText("Opslaan");
@@ -1122,8 +1122,7 @@ Ext.define("viewer.components.Edit", {
                 for (var j = 0; j < form.items.length; j++) {
                     var inputEl = form.items.get(j).fileInputEl;
                     if (inputEl) {
-
-                        var file = inputEl.dom.files[0]
+                        var file = inputEl.dom.files[0];
                         if (file) {
                             hasFile = true;
                             break;
@@ -1207,10 +1206,10 @@ Ext.define("viewer.components.Edit", {
             if (attribute.editable) {
 
                 var attIndex = index++;
-                if (i == appLayer.geometryAttributeIndex) {
+                if (i === appLayer.geometryAttributeIndex) {
                     continue;
                 }
-                var colName = attribute.alias != undefined ? attribute.alias : attribute.name;
+                var colName = attribute.alias !== undefined ? attribute.alias : attribute.name;
                 attributeList.push({
                     name: "c" + attIndex,
                     type: 'string'
@@ -1337,7 +1336,7 @@ Ext.define("viewer.components.Edit", {
             }
             var namedIndex = map[key];
             var value = feature[key];
-            if (namedIndex != undefined) {
+            if (namedIndex !== undefined) {
                 newFeature[namedIndex] = value;
             } else {
                 newFeature[key] = value;

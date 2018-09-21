@@ -340,7 +340,7 @@ public class PrintActionBean implements ActionBean {
             result.put("className","attributes");
 
             JSONObject obj = attrsObj.getJSONObject(i);
-            Long appLayerId = obj.getLong("appLayer");
+            long appLayerId = obj.getLong("appLayer");
             try {
                 String filter = obj.optString("filter");
                 filter = filter.isEmpty() ? null : filter;

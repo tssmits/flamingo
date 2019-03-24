@@ -28,6 +28,7 @@ before_install:
   - ls -la ~
   - sudo chown travis:travis ~/.gitconfig
   - ls -la ~
+  - docker pull tomcat:9-jre8
 
 install:
   # load pki-overheid G2/G3 certificates
@@ -45,7 +46,8 @@ script:
   - ulimit -a
   - free -m
   # execute unit tests
-  - mvn -e clean test -B
+  - mvn -e clean test -B  -pl '!tomcat-lib'
+  - .travis/start_tomcat_9.sh
   # run integration tests on all modules except viewer-admin
   - mvn -e verify -B -Ptravis-ci -pl '!viewer-admin'
   # run integration tests on viewer-admin module only
@@ -61,6 +63,9 @@ script:
   - if [ "$TRAVIS_JDK_VERSION" == oraclejdk8 ]; then
          mvn javadoc:test-javadoc;
     fi
+
+after_script:
+  #- docker stop tomcat9
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

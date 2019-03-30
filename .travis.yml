@@ -46,7 +46,7 @@ script:
   - ulimit -a
   - free -m
   # execute unit tests
-  - mvn -e clean test -B  -pl '!tomcat-lib'
+  - mvn -e test -B  -pl '!tomcat-lib'
   - .travis/start_tomcat_9.sh
   # run integration tests on all modules except viewer-admin
   - mvn -e verify -B -Ptravis-ci -pl '!viewer-admin'

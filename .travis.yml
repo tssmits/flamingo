@@ -68,7 +68,7 @@ script:
   - ulimit -a
   - free -m
   # execute unit tests
-  - mvn -e test -B  -pl '!tomcat-lib'
+  - mvn -e test -B
   - if [ "$PROFILE" == "tomcat-9" ]; then
       .travis/start_tomcat_9.sh;
     fi

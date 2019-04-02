@@ -12,8 +12,28 @@ addons:
       - haveged
       # - git-lfs should be installed on trusty images
 
+env:
+  global:
+  - PROFILE="travis-ci"
+
 services:
   - haveged
+
+jdk:
+- oraclejdk8
+- openjdk8
+
+os:
+- linux
+
+matrix:
+  fast_finish: true
+  include:
+  - name: tomcat-9
+    jdk: openjdk8
+    sudo: required
+    env:
+    - PROFILE="tomcat-9"
 
 before_install:
   - unset _JAVA_OPTIONS
@@ -28,7 +48,9 @@ before_install:
   - ls -la ~
   - sudo chown travis:travis ~/.gitconfig
   - ls -la ~
-  - docker pull tomcat:9-jre8
+  - if [ "$PROFILE" == "tomcat-9" ]; then
+       docker pull tomcat:9-jre8;
+    fi
 
 install:
   # load pki-overheid G2/G3 certificates
@@ -47,11 +69,13 @@ script:
   - free -m
   # execute unit tests
   - mvn -e test -B  -pl '!tomcat-lib'
-  - .travis/start_tomcat_9.sh
+  - if [ "$PROFILE" == "tomcat-9" ]; then
+      .travis/start_tomcat_9.sh;
+    fi
   # run integration tests on all modules except viewer-admin
-  - mvn -e verify -B -Ptravis-ci -pl '!viewer-admin'
+  - mvn -e verify -B -P$PROFILE -pl '!viewer-admin'
   # run integration tests on viewer-admin module only
-  - mvn -e verify -B -Ptravis-ci -pl 'viewer-admin'
+  - mvn -e verify -B -P$PROFILE -pl 'viewer-admin'
   # run code coverage
   #- mvn cobertura:cobertura -Ptravis-ci
   #- mvn cobertura:cobertura-integration-test -Ptravis-ci
@@ -70,16 +94,6 @@ after_script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   
-jdk:
-  - oraclejdk8
-  - openjdk8
-
-os:
-  - linux
-
-matrix:
-  fast_finish: true
-
 cache:
   directories:
   - $HOME/.m2

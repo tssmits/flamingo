@@ -924,7 +924,6 @@
         </profile>
     </profiles>
     <modules>
-        <module>tomcat-lib</module>
         <module>web-commons</module>
         <module>viewer-commons</module>
         <module>viewer-config-persistence</module>

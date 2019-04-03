@@ -51,6 +51,7 @@ before_install:
   - if [ "$PROFILE" == "tomcat-9" ]; then
        docker pull tomcat:9-jre8;
     fi
+  - ip address
 
 install:
   # load pki-overheid G2/G3 certificates

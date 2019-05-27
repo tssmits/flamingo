@@ -43,6 +43,7 @@ Ext.define("viewer.components.Edit", {
     afterLoadAttributes: null,
     filterFeatureId: null,
     lastUsedValues:null,
+    formValuesAreBeingUpdated: false,
     // Boolean to check if window is hidden temporarily for mobile mode
     mobileHide: false,
     config: {
@@ -945,6 +946,10 @@ Ext.define("viewer.components.Edit", {
             input.addCls("x-item-disabled");
         }
 
+        input.on({
+            change: this.closureOnFormFieldChange(this)
+        });
+
         return input;
     },
     createDynamicInput: function (attribute, values) {
@@ -1074,10 +1079,26 @@ Ext.define("viewer.components.Edit", {
             input.addCls("x-item-disabled");
         }
 
+        input.on({
+            change: this.closureOnFormFieldChange(this)
+        });
+
         return input;
     },
-    setInputPanel: function (feature) {
+    closureOnFormFieldChange: function (me) {
+        return function (input, newValue, oldValue) {
+            if (!me.formValuesAreBeingUpdated && me.mode === 'edit') {
+                me.onFormFieldChange(me, input, newValue, oldValue)
+            }
+        }
+    },
+    setFormValues: function (feature) {
+        this.formValuesAreBeingUpdated = true;
         this.inputContainer.getForm().setValues(feature);
+        this.formValuesAreBeingUpdated = false;
+    },
+    setInputPanel: function (feature) {
+        this.setFormValues(feature);
     },
     selectedContentChanged: function () {
         if (this.vectorLayer === null) {
@@ -1136,7 +1157,7 @@ Ext.define("viewer.components.Edit", {
     },
     handleFeature: function (feature) {
         if (feature != null) {
-            this.inputContainer.getForm().setValues(feature);
+            this.setFormValues(feature);
             if (this.mode === "copy") {
                 this.currentFID = null;
             } else {
@@ -1277,7 +1298,7 @@ Ext.define("viewer.components.Edit", {
     },
     populateFormWithPreviousValues: function(){
         var feature = this.lastUsedValues[this.layerSelector.getValue().id];
-        this.inputContainer.getForm().setValues(feature);
+        this.setFormValues(feature);
     },
     edit: function () {
         this.hideMobilePopup();
@@ -1724,5 +1745,7 @@ Ext.define("viewer.components.Edit", {
             }
         }
         return map;
+    },
+    onFormFieldChange: function (me, input, newValue, oldValue) {
     }
 });

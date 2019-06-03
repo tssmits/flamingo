@@ -57,7 +57,7 @@ Ext.define("viewer.components.Edit", {
         allowCopy: false,
         allowNew: true,
         allowEdit: true,
-        cancelOtherControls: ["viewer.components.Merge", "viewer.components.Split"],
+        cancelOtherControls: ["viewer.components.Merge", "viewer.components.Split", "viewer.components.EditBulk"],
         formLayout: 'anchor',
         showEditLinkInFeatureInfo: false,
         editHelpText: "",

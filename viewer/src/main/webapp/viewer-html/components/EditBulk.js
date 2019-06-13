@@ -152,17 +152,17 @@ Ext.define("viewer.components.EditBulk", {
         field.validate();
     },
     buildPlaceholderForAttributeWithMultipleValues: function (attributeName) {
-        var LEEG = i18next.t('viewer_components_edit_48');
-        var MEERDERE_WAARDES = i18next.t('viewer_components_edit_49');
+        var EMPTY = i18next.t('viewer_components_edit_48');
+        var MULTIPLE = i18next.t('viewer_components_edit_49');
         var values = this.selectedFeatures.getCombinedValuesForAllSelectedFeatures(attributeName);
         values = values.map(function (value) {
             if (typeof value === 'undefined' || value === null) {
-                return LEEG
+                return EMPTY
             } else {
                 return '"' + value + '"';
             }
         });
-        return MEERDERE_WAARDES + ' (' + values.join(', ') + ')';
+        return MULTIPLE + ' (' + values.join(', ') + ')';
     },
     getFormFieldByAttributeName: function (attributeName) {
         return this.inputContainer.getForm().findField(attributeName);

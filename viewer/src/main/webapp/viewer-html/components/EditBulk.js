@@ -236,9 +236,9 @@ Ext.define("viewer.components.EditBulk", {
         viewer.components.EditBulk.superclass.cancel.call(this);
         this.selectedFeatures.deselectAll();
     },
-    onFormFieldChange: function (me, input, newValue, oldValue) {
+    onFormFieldChange: function (input, newValue, oldValue) {
         var attributeName = input.name;
-        me.selectedFeatures.changeValue(attributeName, newValue);
-        me.makeFormFieldScalar(attributeName);
+        this.selectedFeatures.changeValue(attributeName, newValue);
+        this.makeFormFieldScalar(attributeName);
     }
 });

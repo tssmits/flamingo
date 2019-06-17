@@ -185,12 +185,13 @@ Ext.define("viewer.components.EditBulk", {
 
 
         var features = this.selectedFeatures.getSelectedFeaturesWithChangesApplied();
+        me.editingLayer = this.config.viewerController.getLayer(this.layerSelector.getValue());
+        var applayerId = me.editingLayer.getId();
 
         for (var featureIndex = 0; featureIndex < features.length; featureIndex++) {
             var feature = features[featureIndex];
-            me.editingLayer = this.config.viewerController.getLayer(this.layerSelector.getValue());
-            var applayerId = me.editingLayer.getId();
-            this.lastUsedValues [applayerId] = feature;
+
+            this.lastUsedValues[applayerId] = feature;
 
             if (this.geometryEditable) {
                 if (this.vectorLayer.getActiveFeature()) {
@@ -214,23 +215,33 @@ Ext.define("viewer.components.EditBulk", {
                 me.failed(e);
                 return;
             }
-            var ef = this.getEditFeature();
-            ef.edit(
-                me.editingLayer,
-                feature,
-                function (fid) {
-                    // me.saveSucces(fid);
-                    // me.config.viewerController.fireEvent(viewer.viewercontroller.controller.Event.ON_EDIT_SUCCESS, me.editingLayer, feature);
-                    console.debug('success!');
-                }, function (error) {
-                    // me.failed(error);
-                    console.debug('failed :(');
-                });
+
+            features[featureIndex] = feature;
         }
 
-        var msg = i18next.t('viewer_components_edit_34');
-        Ext.Msg.alert("Gelukt", msg);
+        var ebf = this.getEditBulkFeature();
+        ebf.editbulk(
+            me.editingLayer,
+            features,
+            function (fid) {
+                // me.saveSucces(fid);
+                // me.config.viewerController.fireEvent(viewer.viewercontroller.controller.Event.ON_EDIT_SUCCESS, me.editingLayer, feature);
+                console.debug('success!');
+                var msg = i18next.t('viewer_components_edit_34');
+                Ext.Msg.alert("Gelukt", msg);
+            }, function (error) {
+                // me.failed(error);
+                console.debug('failed :(');
+                var msg = i18next.t('viewer_components_edit_50');
+                Ext.Msg.alert("Niet gelukt", msg);
+            });
+
         this.cancel();
+    },
+    getEditBulkFeature: function () {
+        return Ext.create("viewer.EditBulkFeature", {
+            viewerController: this.config.viewerController
+        });
     },
     cancel: function () {
         viewer.components.EditBulk.superclass.cancel.call(this);

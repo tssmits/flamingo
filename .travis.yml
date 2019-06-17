@@ -13,7 +13,6 @@ addons:
       # - git-lfs should be installed on trusty images
 
 services:
-  - docker
   - haveged
 
 before_install:
@@ -30,7 +29,6 @@ before_install:
   - ls -la ~
   - sudo chown travis:travis ~/.gitconfig
   - ls -la ~
-  - docker-compose -f viewer-commons/docker/geoserver/docker-compose.yml up -d --build
 
 install:
   - wget http://cert.pkioverheid.nl/RootCA-G3.cer

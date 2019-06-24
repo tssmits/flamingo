@@ -57,7 +57,7 @@ Ext.define("viewer.components.Edit", {
         allowCopy: false,
         allowNew: true,
         allowEdit: true,
-        cancelOtherControls: ["viewer.components.Merge", "viewer.components.Split"],
+        cancelOtherControls: ["viewer.components.Merge", "viewer.components.Split", "viewer.components.EditBulk"],
         formLayout: 'anchor',
         showEditLinkInFeatureInfo: false,
         editHelpText: "",
@@ -920,7 +920,11 @@ Ext.define("viewer.components.Edit", {
             value: fieldText,
             disabled: !this.allowedEditable(attribute),
             labelClsExtra: this.editLblClass,
-            allowBlank: !disallowNull
+            allowBlank: !disallowNull,
+            listeners: {
+                scope: this,
+                change: this.validateFormFieldChange
+            }
         };
         var input;
         if (attribute.editHeight) {
@@ -945,10 +949,6 @@ Ext.define("viewer.components.Edit", {
             input.setReadOnly(true);
             input.addCls("x-item-disabled");
         }
-
-        input.on({
-            change: this.closureOnFormFieldChange(this)
-        });
 
         return input;
     },
@@ -1042,7 +1042,11 @@ Ext.define("viewer.components.Edit", {
             allowBlank: !disallowNull,
             disabled: !this.allowedEditable(attribute),
             editable: !(attribute.hasOwnProperty('allowValueListOnly') && attribute.allowValueListOnly),
-            labelClsExtra: this.editLblClass
+            labelClsExtra: this.editLblClass,
+            listeners: {
+                scope: this,
+                change: this.validateFormFieldChange
+            }
         });
         
         //when device is mobile dont allow the touchend event. This will activate a field that is lying under the dropdown picker(ul)
@@ -1079,18 +1083,15 @@ Ext.define("viewer.components.Edit", {
             input.addCls("x-item-disabled");
         }
 
-        input.on({
-            change: this.closureOnFormFieldChange(this)
-        });
-
         return input;
     },
-    closureOnFormFieldChange: function (me) {
-        return function (input, newValue, oldValue) {
-            if (!me.formValuesAreBeingUpdated && me.mode === 'edit') {
-                me.onFormFieldChange(me, input, newValue, oldValue)
-            }
+    validateFormFieldChange: function (input, newValue, oldValue) {
+        if (this.isChangeTriggeredByUserAction()) {
+            this.onFormFieldChange(input, newValue, oldValue)
         }
+    },
+    isChangeTriggeredByUserAction: function () {
+        return !this.formValuesAreBeingUpdated && this.mode === 'edit'
     },
     setFormValues: function (feature) {
         this.formValuesAreBeingUpdated = true;
@@ -1746,6 +1747,6 @@ Ext.define("viewer.components.Edit", {
         }
         return map;
     },
-    onFormFieldChange: function (me, input, newValue, oldValue) {
+    onFormFieldChange: function (input, newValue, oldValue) {
     }
 });
